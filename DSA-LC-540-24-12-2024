@@ -1,0 +1,122 @@
+Question: Find minimum diameter after merging two trees.
+
+There exist two undirected trees with n and m nodes, numbered from 0 to n - 1 and from 0 to m - 1, respectively. You are given two 2D integer arrays edges1 and edges2 of lengths n - 1 and m - 1, respectively, where edges1[i] = [ai, bi] indicates that there is an edge between nodes ai and bi in the first tree and edges2[i] = [ui, vi] indicates that there is an edge between nodes ui and vi in the second tree.
+
+You must connect one node from the first tree with another node from the second tree with an edge.
+
+Return the minimum possible diameter of the resulting tree.
+
+The diameter of a tree is the length of the longest path between any two nodes in the tree.
+
+ APPROACH==>   RANDOM NODE -> FARTHEST NODE NIKALNA H -> ANOTHER FARTHEST NODE 
+
+Example 1:
+
+Input: edges1 = [[0,1],[0,2],[0,3]], edges2 = [[0,1]]
+
+Output: 3
+
+Explanation:
+
+We can obtain a tree of diameter 3 by connecting node 0 from the first tree with any node from the second tree.
+
+Example 2:
+
+
+Input: edges1 = [[0,1],[0,2],[0,3],[2,4],[2,5],[3,6],[2,7]], edges2 = [[0,1],[0,2],[0,3],[2,4],[2,5],[3,6],[2,7]]
+
+Output: 5
+
+Explanation:
+
+We can obtain a tree of diameter 5 by connecting node 0 from the first tree with node 0 from the second tree.
+
+ 
+
+Constraints:
+
+1 <= n, m <= 105
+edges1.length == n - 1
+edges2.length == m - 1
+edges1[i].length == edges2[i].length == 2
+edges1[i] = [ai, bi]
+0 <= ai, bi < n
+edges2[i] = [ui, vi]
+0 <= ui, vi < m
+The input is generated such that edges1 and edges2 represent valid trees.
+
+
+Code:
+
+int farthestNode=0;
+    
+    int bfs(int source, unordered_map<int,vector<int>> &graph)
+    {
+        unordered_map<int, bool>um;
+        um[source] = true;
+        queue<int>q;
+        q.push(source);
+
+        int level = 0;
+
+        while(!q.empty())
+        {
+            int n = q.size();
+
+            for(int i=0 ;i<n;i++)
+            {   
+                int currnode = q.front();
+                farthestNode = currnode;
+                q.pop();
+                for(auto x: graph[currnode])
+                {
+                    if(um[x] == false)
+                    {
+                        um[x] = true;
+                        q.push(x);
+                    }
+                    
+                }
+            }
+            
+            if(!q.empty())
+             level++;
+        }
+
+
+        return level;
+    }
+
+    int minimumDiameterAfterMerge(vector<vector<int>>& edges1, vector<vector<int>>& edges2) {
+
+        unordered_map<int,vector<int>>graph1;
+        unordered_map<int,vector<int>>graph2;
+
+        for(auto x: edges1)
+        {
+            graph1[x[0]].push_back(x[1]);
+            graph1[x[1]].push_back(x[0]);
+        }
+        for(auto x: edges2)
+        {
+            graph2[x[0]].push_back(x[1]);
+            graph2[x[1]].push_back(x[0]);
+        }
+
+        // let a random node be 0 always  (0  ->  one of End  ->  another end of graph)
+    
+        bfs(0, graph1);
+        int diam1 = bfs(farthestNode, graph1);
+
+        farthestNode=0;
+        
+        bfs(0, graph2);
+        int diam2 = bfs(farthestNode, graph2);
+
+
+        int combineDiam = (diam1+1)/2 + (diam2+1)/2 + 1;
+
+        return max(diam1, max(diam2, combineDiam));
+
+        
+    }
