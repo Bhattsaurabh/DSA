@@ -1,0 +1,96 @@
+Question: Russian Doll Envelopes.
+
+You are given a 2D array of integers envelopes where envelopes[i] = [wi, hi] represents the width and the height of an envelope.
+
+One envelope can fit into another if and only if both the width and height of one envelope are greater than the other envelope's width and height.
+
+Return the maximum number of envelopes you can Russian doll (i.e., put one inside the other).
+
+Note: You cannot rotate an envelope.
+
+ 
+
+Example 1:
+
+Input: envelopes = [[5,4],[6,4],[6,7],[2,3]]
+Output: 3
+Explanation: The maximum number of envelopes you can Russian doll is 3 ([2,3] => [5,4] => [6,7]).
+Example 2:
+
+Input: envelopes = [[1,1],[1,1],[1,1]]
+Output: 1
+ 
+
+Constraints:
+
+1 <= envelopes.length <= 105
+envelopes[i].length == 2
+1 <= wi, hi <= 10^5
+
+
+Code:
+
+ int solve(int idx, int prev_idx, vector<int>&v,  vector<vector<int>>&dp)
+    {
+        int n = v.size();
+        
+        if(idx == n)
+         return 0;
+
+        if(dp[idx][prev_idx+1] != -1)
+         return dp[idx][prev_idx+1];
+        
+        int take = 0;
+          if(prev_idx == -1 || v[prev_idx] < v[idx])
+           take = 1 + solve(idx+1, idx, v, dp);
+        
+        int nottake = 0 + solve(idx+1, prev_idx, v, dp);
+
+
+        return dp[idx][prev_idx+1] =  max(take, nottake);
+    }
+
+    int optimalUsingBinarySearch(vector<int>&v)   //LIS longest increasing subsequence
+    {
+        int n = v.size();
+
+        vector<int>res;
+        res.push_back(v[0]);
+
+        for(int i=1 ;i<n;i++)
+        {
+            if(v[i] > res.back())
+             res.push_back(v[i]);
+            else{
+                int idx = lower_bound(res.begin(), res.end(), v[i]) - res.begin();
+                res[idx] = v[i];
+            }
+        }
+
+        return res.size();
+    }
+
+    int maxEnvelopes(vector<vector<int>>& envelopes) {
+
+        int n = envelopes.size();
+
+        sort(envelopes.begin(), envelopes.end(), [](auto a, auto b) {
+            if(a[0] == b[0])
+             return a[1] > b[1];
+            
+            return a[0]<b[0];
+        });
+
+        vector<int>v;
+        for(vector<int>&vec : envelopes)
+        {
+            v.push_back(vec[1]);
+        }
+
+        // vector<vector<int>>dp(n, vector<int>(n+1, -1));
+        // return solve(0,-1,v, dp);
+
+        return optimalUsingBinarySearch(v);  //apply LIS only height
+        
+    }
+
