@@ -1,0 +1,105 @@
+Question: Maximum sum of 3 non-overlapping subarrays.
+
+Given an integer array nums and an integer k, find three non-overlapping subarrays of length k with maximum sum and return them.
+
+Return the result as a list of indices representing the starting position of each interval (0-indexed). If there are multiple answers, return the lexicographically smallest one.
+
+ 
+
+Example 1:
+
+Input: nums = [1,2,1,2,6,7,5,1], k = 2
+Output: [0,3,5]
+Explanation: Subarrays [1, 2], [2, 6], [7, 5] correspond to the starting indices [0, 3, 5].
+We could have also taken [2, 1], but an answer of [1, 3, 5] would be lexicographically larger.
+Example 2:
+
+Input: nums = [1,2,1,2,1,2,1,2,1], k = 2
+Output: [0,2,4]
+ 
+
+Constraints:
+
+1 <= nums.length <= 2 * 104
+1 <= nums[i] < 216
+1 <= k <= floor(nums.length / 3)
+
+
+Code:
+
+ int dp [20001][4]; // i and count changes
+    // only memoize helper 
+
+    int helper(int i, int k, int count,vector<int>& nums, vector<int> &subarraysSum )
+    {
+        int n = nums.size();
+
+        if(count == 0)
+         return 0;
+        
+        if(i >= n)
+         return INT_MIN;
+
+        if(dp[i][count] != -1)
+         return dp[i][count];
+
+        int take = subarraysSum[i] +  helper(i+k, k, count-1, nums, subarraysSum);
+        int nottake = helper(i+1, k, count, nums, subarraysSum);
+
+        return dp[i][count] = max(take, nottake);
+    }
+
+
+    // we are not memoizing solve because  res vector keeps changes so difficult to memoize.
+    void solve(int i, int k, int count, vector<int>& nums, vector<int> &res,  
+    vector<int> &subarraysSum)
+    {
+        int n = nums.size();
+
+        if(count== 0)
+         return;
+
+        if(i >= n)
+         return;
+        
+          
+        int take_i = subarraysSum[i] +  helper(i+k, k, count-1, nums,subarraysSum );
+        
+        int nottake_i  = helper(i+1, k, count, nums, subarraysSum);
+
+        if(take_i >= nottake_i)
+        {
+            res.push_back(i);
+            solve(i+k, k, count-1, nums, res, subarraysSum);
+        }
+        else{
+            solve(i+1, k, count, nums, res, subarraysSum);
+        }
+
+    }
+
+    vector<int> maxSumOfThreeSubarrays(vector<int>& nums, int k) {
+
+        memset(dp, -1, sizeof(dp));  // intialising global dp
+        int n = nums.size();
+        vector<int>res;
+        int i=0 ,j=0, sum=0;
+        vector<int>subarraysSum(n);
+
+        while( j<n )
+        {
+            while(i<j && (j-i+1)>k)
+            {
+                sum -= nums[i];
+                i++;
+            }
+            sum += nums[j];
+            if(j-i+1 == k)
+            subarraysSum[i] = sum;
+            j++;
+        }
+
+        solve(0, k, 3, nums, res, subarraysSum);
+        return res;
+     
+    }
