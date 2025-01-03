@@ -27,3 +27,49 @@ Constraints:
 1 <= nums.length <= 1000
 0 <= nums[i] <= 106
 1 <= k <= min(50, nums.length)
+
+Code:
+
+
+int solve(vector<int>& nums, int maxSum)
+{
+    int n = nums.size();
+    int currsum = 0;
+    int split = 1;
+
+    for(int i=0 ;i<n ;i++)
+    {
+        if(currsum + nums[i] <= maxSum)
+        {
+            currsum += nums[i];
+        }
+        else{
+            split++;
+            currsum = nums[i];
+        }
+    }
+   
+ return split;
+}
+
+int splitArray(vector<int>& nums, int k) {
+  
+  int low = *max_element(nums.begin(), nums.end());
+  int high  = accumulate(begin(nums), end(nums), 0);
+
+  int ans = INT_MAX;
+  
+  while(low <= high)
+  {
+     int mid = (low+high)/2;
+     int split = solve(nums, mid);
+
+     if(split > k)
+      low = mid+1;
+     else
+      high = mid-1;
+  }
+
+return low;
+    
+}
