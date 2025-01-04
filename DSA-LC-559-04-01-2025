@@ -1,0 +1,90 @@
+Question: Longest Palindromic Subsequence (LPS).
+
+Given a string s, find the longest palindromic subsequence's length in s.
+
+A subsequence is a sequence that can be derived from another sequence by deleting some or no elements without changing the order of the remaining elements.
+
+ 
+
+Example 1:
+
+Input: s = "bbbab"
+Output: 4
+Explanation: One possible longest palindromic subsequence is "bbbb".
+Example 2:
+
+Input: s = "cbbd"
+Output: 2
+Explanation: One possible longest palindromic subsequence is "bb".
+ 
+
+Constraints:
+
+1 <= s.length <= 1000
+s consists only of lowercase English letters.
+
+
+Code:
+
+
+    int solve(int idx1, int idx2, string s1, string s2, vector<vector<int>> &dp)
+    {
+        if(idx1<0 || idx2<0)
+         return 0;
+
+        if(dp[idx1][idx2] != -1)
+          return dp[idx1][idx2];
+
+        if(s1[idx1] == s2[idx2])   // match
+        {
+            return dp[idx1][idx2] =  1 + solve(idx1-1, idx2-1, s1, s2, dp);
+        }
+
+        //not match 2 possibilities
+
+        return dp[idx1][idx2] = 0 + max(solve(idx1, idx2-1, s1, s2, dp), solve(idx1-1, idx2, s1, s2, dp));
+    }
+
+    int tabulation(string s1, string s2)
+    {
+        int n = s1.size();
+        vector<vector<int>>dp(n+1, vector<int>(n+1, -1));
+
+        for(int idx1=0 ;idx1<=n;idx1++)
+         dp[idx1][0] = 0;
+        for(int idx2=0 ;idx2<=n;idx2++)
+         dp[0][idx2] = 0;
+
+        //index shifting for base case -1 => 0
+
+        for(int idx1=1 ;idx1<=n ;idx1++)
+        {
+            for(int idx2=1 ;idx2<=n ;idx2++)
+             {
+                 if(s1[idx1-1] == s2[idx2-1])                  // string m toh i=0 hi rhega
+                  dp[idx1][idx2] =  1 + dp[idx1-1][idx2-1];
+                 else
+                   dp[idx1][idx2] =  max(dp[idx1][idx2-1], dp[idx1-1][idx2]);
+             }
+        }
+
+        return dp[n][n];
+
+    }
+
+    int longestPalindromeSubseq(string s) {
+
+        int n = s.size();
+
+        //THIS PROBLEM IS SAME AS LCS TAKE SECOND STRING AS REVERSE OF FIRST
+        string s1 = "";
+        for(auto &ch : s)
+        {
+            s1 = ch+s1;
+        }
+        // vector<vector<int>>dp(n, vector<int>(n, -1));
+        // return solve(n-1, n-1, s, s1, dp);
+
+        return tabulation(s,s1);
+        
+    }
