@@ -1,0 +1,74 @@
+Question: K - palindrome
+
+
+Given a string str of length n, find if the string is K-Palindrome or not. A k-palindrome string transforms into a palindrome on removing at most k characters from it.
+
+
+Example 1:
+
+Input: str = "abcdecba"
+n = 8, k = 1
+Output: 1
+Explaination: By removing 'd' or 'e' 
+we can make it a palindrome.
+
+Example 2:
+
+Input: str = "abcdefcba"
+n = 9, k = 1
+Output: 0
+Explaination: By removing a single 
+character we cannot make it a palindrome.
+
+Your Task:
+You do not need to read input or print anything. Your task is to complete the function kPalindrome() which takes string str, n, and k as input parameters and returns 1 if str is a K-palindrome else returns 0.
+
+
+Expected Time Complexity: O(n*n)
+Expected Auxiliary Space: O(n*n)
+
+
+Constraints:
+1 ≤ n, k ≤ 10^3
+
+
+Code:
+
+ int lcs(int i, int j, string& s1, string& s2, vector<vector<int>>&dp)
+    {
+        int n=s1.size();
+        
+        if(i == n || j == n)
+           return 0;
+           
+        if(dp[i][j] != -1)
+         return dp[i][j];
+          
+        
+        int take=0,nottake=0;
+          
+        if(s1[i] == s2[j])
+         {
+             take = 1 + lcs(i+1,j+1, s1,s2, dp);
+         }
+        else{
+            nottake = 0 + max(lcs(i,j+1,s1,s2, dp),lcs(i+1,j,s1,s2, dp));
+        }
+        
+        return  dp[i][j] = max(take,nottake);
+        
+    }
+
+
+    int kPalindrome(string str, int n, int k)
+    {
+        
+        string s1 = str;
+        reverse(s1.begin(), s1.end());
+        vector<vector<int>>dp(n+1, vector<int>(n+1, -1));
+        
+        int LCS = lcs(0,0, str,s1, dp);
+        
+        return ((n-LCS) <=k) ? 1: 0;
+         
+    }
