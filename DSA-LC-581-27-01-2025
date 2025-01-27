@@ -1,0 +1,157 @@
+Question: Course Schedule IV.
+
+There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. You are given an array prerequisites where prerequisites[i] = [ai, bi] indicates that you must take course ai first if you want to take course bi.
+
+For example, the pair [0, 1] indicates that you have to take course 0 before you can take course 1.
+Prerequisites can also be indirect. If course a is a prerequisite of course b, and course b is a prerequisite of course c, then course a is a prerequisite of course c.
+
+You are also given an array queries where queries[j] = [uj, vj]. For the jth query, you should answer whether course uj is a prerequisite of course vj or not.
+
+Return a boolean array answer, where answer[j] is the answer to the jth query.
+
+ 
+
+Example 1:
+
+
+Input: numCourses = 2, prerequisites = [[1,0]], queries = [[0,1],[1,0]]
+Output: [false,true]
+Explanation: The pair [1, 0] indicates that you have to take course 1 before you can take course 0.
+Course 0 is not a prerequisite of course 1, but the opposite is true.
+Example 2:
+
+Input: numCourses = 2, prerequisites = [], queries = [[1,0],[0,1]]
+Output: [false,false]
+Explanation: There are no prerequisites, and each course is independent.
+Example 3:
+
+
+Input: numCourses = 3, prerequisites = [[1,2],[1,0],[2,0]], queries = [[1,0],[1,2]]
+Output: [true,true]
+ 
+
+Constraints:
+
+2 <= numCourses <= 100
+0 <= prerequisites.length <= (numCourses * (numCourses - 1) / 2)
+prerequisites[i].length == 2
+0 <= ai, bi <= numCourses - 1
+ai != bi
+All the pairs [ai, bi] are unique.
+The prerequisites graph has no cycles.
+1 <= queries.length <= 104
+0 <= ui, vi <= numCourses - 1
+ui != vi
+
+code:
+
+//approach 1: BFS/DFS
+//approach 2: Topological sort
+
+int n;
+    
+    vector<bool> topologicalSort( vector<vector<int>>& prerequisites, vector<vector<int>>& queries){
+
+        unordered_map<int, vector<int>>adj;
+        vector<int>indegree(n, 0);
+        for(int i=0 ;i<prerequisites.size();i++)
+        {
+            int u = prerequisites[i][0];
+            int v = prerequisites[i][1];
+            adj[u].push_back(v);
+            indegree[v]++;
+        }
+
+        unordered_map<int, unordered_set<int>>um;
+        queue<int>q;
+
+        for(int i=0 ;i<n;i++)
+        {
+            if(indegree[i] == 0){
+             q.push(i);
+            }
+        }
+
+
+        while(!q.empty())
+        {
+            int node = q.front();
+            q.pop();
+
+            for(auto& ngbr: adj[node])
+            {
+                um[ngbr].insert(node);
+                //node k jitne b prerequites honge wo ngbr node k b honge
+                for(auto& preq: um[node])
+                {
+                    um[ngbr].insert(preq);
+                }
+
+                indegree[ngbr]--;
+                if(indegree[ngbr] == 0)
+                 q.push(ngbr);
+            }
+        }
+
+        vector<bool>res;
+        for(auto& que: queries)
+        {
+            int u = que[0];
+            int v = que[1];
+
+            if(um[v].find(u) != um[v].end())
+             res.push_back(true);
+            else
+             res.push_back(false);
+        }
+
+        return res;
+
+    }
+
+    bool dfs(int src, int dst, unordered_map<int,vector<int>>&adj, vector<bool>&vis)
+    {
+        vis[src] = true;
+
+        if(src == dst)
+         return true;
+
+        for(auto& adjNode : adj[src])
+        {
+            if(vis[adjNode] == false && dfs(adjNode, dst, adj, vis))
+                return true;
+        }
+
+        return false;
+    }
+
+
+
+    vector<bool> checkIfPrerequisite(int numCourses, vector<vector<int>>& prerequisites, vector<vector<int>>& queries) {
+
+
+        n = numCourses;
+
+         return topologicalSort(prerequisites, queries);
+
+        // unordered_map<int, vector<int>>adj;
+
+        // for(int i=0 ;i<prerequisites.size();i++)
+        // {
+        //     int u = prerequisites[i][0];
+        //     int v = prerequisites[i][1];
+
+        //     adj[u].push_back(v);
+        // }
+
+        // vector<bool>res(queries.size(), false);
+      
+        // for(int i=0 ;i<queries.size();i++)
+        // {
+        //     vector<bool>vis(n, false);
+        //     res[i] = dfs(queries[i][0], queries[i][1], adj, vis);
+        // }
+
+        // return res;
+
+    }
