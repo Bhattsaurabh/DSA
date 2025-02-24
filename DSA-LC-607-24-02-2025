@@ -1,0 +1,135 @@
+Question: Rotate List.
+
+Given the head of a linked list, rotate the list to the right by k places.
+
+ 
+
+Example 1:
+
+
+Input: head = [1,2,3,4,5], k = 2
+Output: [4,5,1,2,3]
+Example 2:
+
+
+Input: head = [0,1,2], k = 4
+Output: [2,0,1]
+ 
+
+Constraints:
+
+The number of nodes in the list is in the range [0, 500].
+-100 <= Node.val <= 100
+0 <= k <= 2 * 10^9
+
+
+Code:
+
+ ListNode* reverseLL(ListNode* start)
+    {
+        ListNode* curr = start;
+        ListNode* prev = NULL;
+        ListNode* next;
+
+        while(curr != NULL)
+        {
+            next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+
+        }
+
+        return prev;
+    }
+
+    ListNode* reverseLL1(ListNode* start, ListNode* end)
+    {
+        ListNode* curr = start;
+        ListNode* prev = NULL;
+        ListNode* next;
+
+        while(prev != end)
+        {
+            next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+
+        }
+      
+        return start;
+    }
+
+    ListNode* reverseLL2(ListNode* start, ListNode* end)
+    {
+        ListNode* curr = start;
+        ListNode* prev = NULL;
+        ListNode* next;
+
+        while(curr != end)
+        {
+            next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+
+        }
+      
+        return prev;
+    }
+  
+    ListNode* rotateRight(ListNode* head, int k) {
+
+        if(head == NULL || k==0)
+         return head;
+
+        int n=0;
+        ListNode* curr= head;
+
+        while(curr != NULL)
+        {
+            curr = curr->next;
+            n++;
+            
+        }
+        if(k%n == 0)
+         return head;
+         
+        if(k>n)
+        {
+            k = k%n;
+        }
+
+        int count=0;
+       
+        curr = head;
+        ListNode* start= head;
+        ListNode*  res;
+        while(curr != NULL)
+        {
+            count++;
+
+            if(n-count == k)
+            {
+                ListNode* ptr = curr;
+                ListNode* prev =  reverseLL2(curr->next, NULL);
+                ListNode* lastnode = reverseLL1(start, curr);
+                lastnode->next = prev;
+
+                // while(ptr!= NULL)
+                //  {
+                //     cout<<ptr->val<<endl;
+                //     ptr = ptr->next;
+                //  }
+                 res = reverseLL(ptr);
+                 break;
+               
+            }
+
+            curr = curr->next;
+        }
+
+        return res;
+        
+    }
