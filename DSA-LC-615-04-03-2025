@@ -1,0 +1,66 @@
+Question: Check If a number is a sum of power of 3.
+
+
+
+Given an integer n, return true if it is possible to represent n as the sum of distinct powers of three. Otherwise, return false.
+
+An integer y is a power of three if there exists an integer x such that y == 3x.
+
+ 
+Example 1:
+
+Input: n = 12
+Output: true
+Explanation: 12 = 31 + 32
+Example 2:
+
+Input: n = 91
+Output: true
+Explanation: 91 = 30 + 32 + 34
+Example 3:
+
+Input: n = 21
+Output: false
+ 
+
+Constraints:
+
+1 <= n <= 10^7
+
+Code:
+
+
+  bool checkPowersOfThree(int n) {
+
+        int rem=0, quot=0;
+        unordered_set<int>s;
+
+        int i=0;
+
+        while(true)
+        {
+            int num = pow(3, i);
+            if(num == n && s.find(i) == s.end())
+             return true;
+
+            if(num > n ) 
+            {
+                if(s.find(i-1) == s.end())
+                {
+                    s.insert(i-1);
+                    n = n - pow(3, i-1);
+                    i=0;
+                    continue;
+                }
+                else{
+                    return false;
+                }
+               
+            }
+            i++; 
+        }
+
+        return false;
+
+
+    }
