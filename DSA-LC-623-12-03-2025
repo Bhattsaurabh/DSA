@@ -1,0 +1,88 @@
+Question: Maximum count of positive integer and negative integer.
+
+Given an array nums sorted in non-decreasing order, return the maximum between the number of positive integers and the number of negative integers.
+
+In other words, if the number of positive integers in nums is pos and the number of negative integers is neg, then return the maximum of pos and neg.
+Note that 0 is neither positive nor negative.
+
+ 
+
+Example 1:
+
+Input: nums = [-2,-1,-1,1,2,3]
+Output: 3
+Explanation: There are 3 positive integers and 3 negative integers. The maximum count among them is 3.
+Example 2:
+
+Input: nums = [-3,-2,-1,0,0,1,2]
+Output: 3
+Explanation: There are 2 positive integers and 3 negative integers. The maximum count among them is 3.
+Example 3:
+
+Input: nums = [5,20,66,1314]
+Output: 4
+Explanation: There are 4 positive integers and 0 negative integers. The maximum count among them is 4.
+ 
+
+Constraints:
+
+1 <= nums.length <= 2000
+-2000 <= nums[i] <= 2000
+nums is sorted in a non-decreasing order.
+ 
+
+Follow up: Can you solve the problem in O(log(n)) time complexity?
+
+Code:
+
+int maximumCount(vector<int>& nums) {
+        
+        int n =nums.size();
+        
+        int low=0, high= n-1;
+
+        if(nums[low] > 0 || nums[high] < 0)
+         return n;
+
+        int maxNeg=0, maxPos=0;
+        
+        int first = lower_bound(nums.begin(), nums.end(), 0) - nums.begin();
+        int last = upper_bound(nums.begin(), nums.end(), 0) - nums.begin();
+
+        if(first != last)
+        {
+            maxNeg = first;
+            maxPos = n-last;
+            return max(maxNeg, maxPos);
+        }
+
+        while(low<=high)
+        {
+            int mid = (low+high)/2;
+
+            if(nums[mid] < 0  && nums[mid+1] > 0)
+            {
+                maxNeg = mid+1;
+                maxPos = n-mid-1;
+                break;
+            }
+             else if(nums[mid] > 0  && nums[mid-1] < 0)
+            {
+                maxNeg = mid;
+                maxPos = n-mid;
+                break;
+            }
+            else if(nums[mid] < 0 )
+            {
+               low = mid+1;
+            }
+            else{
+                high = mid-1;
+            }
+
+        }
+
+        return max(maxNeg, maxPos);
+
+
+    }
