@@ -1,4 +1,4 @@
-Question: Lowest Common Ancestor of deepest leaves.
+Question:Lowest Common Ancestor of deepest leaves.
 
 Given the root of a binary tree, return the lowest common ancestor of its deepest leaves.
 
