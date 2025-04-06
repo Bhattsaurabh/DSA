@@ -1,0 +1,108 @@
+Question: Largest Divisible Subset.
+
+Given a set of distinct positive integers nums, return the largest subset answer such that every pair (answer[i], answer[j]) of elements in this subset satisfies:
+
+answer[i] % answer[j] == 0, or
+answer[j] % answer[i] == 0
+If there are multiple solutions, return any of them.
+
+ 
+
+Example 1:
+
+Input: nums = [1,2,3]
+Output: [1,2]
+Explanation: [1,3] is also accepted.
+Example 2:
+
+Input: nums = [1,2,4,8]
+Output: [1,2,4,8]
+ 
+
+Constraints:
+
+1 <= nums.length <= 1000
+1 <= nums[i] <= 2 * 109
+All the integers in nums are unique.
+
+
+Code:
+
+
+    void solve(int idx, vector<int>& nums, vector<int>&ds, vector<int>&res, int prev)
+    {
+        int  n = nums.size();
+        if(idx >= n)
+        {
+            if(res.size() < ds.size())
+             res = ds;
+            return;
+        }
+
+
+        if(prev == -1 || nums[idx] % prev == 0 )
+        {
+             ds.push_back(nums[idx]);
+             solve(idx+1, nums, ds, res, nums[idx]);
+             ds.pop_back();
+        }
+       
+        solve(idx+1, nums, ds, res, prev);
+        
+    }
+
+    vector<int> bottomUp(vector<int>& nums)
+    {
+        sort(begin(nums), end(nums));
+        int n = nums.size();
+        vector<int>dp(n, 1);
+        vector<int>prev_idx(n, -1);
+        vector<int>res;
+
+        int max_L = 1;
+        int last_choosen_idx = 0;
+
+        for(int i=1 ;i<n;i++)
+        {
+            for(int j=0 ;j<i;j++)
+            {
+                if(nums[i] % nums[j] == 0)
+                {
+                   if(dp[i] < dp[j] + 1)
+                   {
+                    dp[i] = dp[j] + 1;
+                    prev_idx[i] = j;
+                   }
+
+                   if(dp[i] > max_L)
+                   {
+                    max_L = dp[i];
+                    last_choosen_idx = i;
+                   }
+                }
+            }
+        }
+
+        while(last_choosen_idx != -1)
+        {
+            res.push_back(nums[last_choosen_idx]);
+            last_choosen_idx = prev_idx[last_choosen_idx];
+        }
+
+        return res;
+    }
+
+
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+
+        return bottomUp(nums);
+        
+        // sort(begin(nums), end(nums));
+        // vector<int>res;
+        // vector<int>ds;
+        // int prev=-1;
+        // solve(0, nums, ds, res, prev, dp);
+
+        // return res;
+        
+    }
