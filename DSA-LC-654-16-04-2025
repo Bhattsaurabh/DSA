@@ -1,4 +1,4 @@
-Question: Count the number of good subarrays.
+Question: Count the number of good subarrays .
 
 Given an integer array nums and an integer k, return the number of good subarrays of nums.
 
